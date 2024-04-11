@@ -253,7 +253,7 @@ public class MarketPostDAO {
 		if (marketPostDTO.getSearchCondition().equals("marketPostViewcntUpdate")) {
 			result = jdbcTemplate.update(UPDATE_VIEWCNT,marketPostDTO.getMarketPostId());
 		} else if(marketPostDTO.getSearchCondition().equals("marketPostUpdate")){
-			result = jdbcTemplate.update(UPDATE,marketPostDTO.getMarketPostPrice(),marketPostDTO.getMarketPostCategory(),marketPostDTO.getMarketPostCompany(),marketPostDTO.getMarketPostStatus(),marketPostDTO.getMarketPostTitle(),marketPostDTO.getMarketPostContent());
+			result = jdbcTemplate.update(UPDATE,marketPostDTO.getMarketPostPrice(),marketPostDTO.getMarketPostCategory(),marketPostDTO.getMarketPostCompany(),marketPostDTO.getMarketPostStatus(),marketPostDTO.getMarketPostTitle(),marketPostDTO.getMarketPostContent(),marketPostDTO.getMarketPostId());
 		}
 		if (result <= 0) {
 			return false;
@@ -287,7 +287,7 @@ class MarketPostSelectAllRowMapper implements RowMapper<MarketPostDTO> {
 		data.setMarketPostTitle(rs.getString("MARKETPOST_title"));
 		data.setMarketPostContent(rs.getString("MARKETPOST_content"));
 		data.setMarketPostViewcnt(rs.getString("MARKETPOST_viewcnt"));
-		data.setRecommendCnt(rs.getString("RECOMMEND_cnt"));
+		data.setRecommendCnt(rs.getInt("RECOMMEND_cnt"));
 		data.setPostImgName(rs.getString("POSTIMG_name"));
 
 		return data;
@@ -317,7 +317,7 @@ class MarketPostSelectOneRowMapper implements RowMapper<MarketPostDTO> {
 		data.setMarketPostTitle(rs.getString("MARKETPOST_title"));
 		data.setMarketPostContent(rs.getString("MARKETPOST_content"));
 		data.setMarketPostViewcnt(rs.getString("MARKETPOST_viewcnt"));
-		data.setRecommendCnt(rs.getString("RECOMMEND_cnt"));
+		data.setRecommendCnt(rs.getInt("RECOMMEND_cnt"));
 		
 		return data;
 	}

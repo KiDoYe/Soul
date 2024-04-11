@@ -5,6 +5,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import infinitystone.chalKag.biz.comment.CommentDTO;
+import infinitystone.chalKag.biz.member.MemberDTO;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -15,18 +18,26 @@ public class ReviewDAO {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
-  private static final String SELECTALL = "SELECT REVIEW.REVIEW_id " +
-      "REVIEW.MEMBER_id, " +
-      "MEMBER1.MEMBER_nickname AS MEMBER_nickname, " +
-      "REVIEW.REVIEW_partner, " +
-      "MEMBER2.MEMBER_nickname AS REVIEW_partnernickname, " +
-      "REVIEW.REVIEW_date, " +
-      "REVIEW.REVIEW_score, " +
-      "REVIEW.REVIEW_content " +
+  private static final String SELECTALL = "SELECT REVIEW_score, " +
+	  "(SELECT PROFILEIMG_name " +
+	  "FROM PROFILEIMG " +
+	  "WHERE PROFILEIMG.MEMBER_id = REVIEW.MEMBER_id " +
+	  "ORDER BY PROFILEIMG_id DESC " +
+	  "LIMIT 1) AS PROFILEIMG_name, " +
+	  "(SELECT COUNT(*) " +
+	  "FROM REVIEW " +
+	  "WHERE REVIEW_partner = ?) AS REVIEW_totalCnt, " +
+	  "REVIEW.MEMBER_id, " +
+      "MEMBER_nickname, " +
+      "REVIEW_partner, " +
+      "REVIEW_content, " +
+      "REVIEW_date, " +
+      "REVIEW_id " +
       "FROM REVIEW " +
-      "INNER JOIN MEMBER MEMBER1 ON REVIEW.MEMBER_id = MEMBER1.MEMBER_id " +
-      "INNER JOIN MEMBER MEMBER2 ON REVIEW.REVIEW_partner = MEMBER2.MEMBER_id " +
-      "WHERE REVIEW.REVIEW_partner = ?";
+      "INNER JOIN MEMBER ON REVIEW.MEMBER_id = MEMBER.MEMBER_id " +
+      "WHERE REVIEW_partner = ? " +
+      "ORDER BY REVIEW_id DESC " +
+  	  "limit ?, ? ";
 
   private static final String SELECTONE = "SELECT REVIEW_id, " +
       "(SELECT PROFILEIMG_name " +
@@ -51,14 +62,18 @@ public class ReviewDAO {
       "REVIEW_content) " +
       "VALUES (?, ?, ?, ?)";
 
-  private static final String UPDATE = "";
+  private static final String UPDATE = "UPDATE REVIEW " +
+		  "SET " +
+		  "REVIEW_score = ?, " +
+		  "REVIEW_content = ? " +
+		  "WHERE REVIEW_id = ?";
 
-  private static final String DELETE = "DELETE REVIEW" +
-      "FROM REVIEW" +
+  private static final String DELETE = "DELETE FROM REVIEW " +
       "WHERE REVIEW_id = ?";
 
   public List<ReviewDTO> selectAll(ReviewDTO reviewDTO) {
-    return (List<ReviewDTO>) jdbcTemplate.queryForObject(SELECTALL, new ReviewRowMapper());
+    Object[] args = {reviewDTO.getReviewPartner(), reviewDTO.getReviewPartner(), reviewDTO.getReviewStart(), reviewDTO.getReviewCnt()};
+    return (List<ReviewDTO>) jdbcTemplate.query(SELECTALL, args, new ReviewRowMapper());
   }
 
   public ReviewDTO selectOne(ReviewDTO reviewDTO) {
@@ -75,11 +90,16 @@ public class ReviewDAO {
   }
 
   public boolean update(ReviewDTO reviewDTO) {
-    return false;
-  }
+		System.out.println("ReviewDAO(update) 로그 =" + "[" + reviewDTO + "]");
+		int result = jdbcTemplate.update(UPDATE, reviewDTO.getReviewScore(), reviewDTO.getReviewContent(), reviewDTO.getReviewId());
+		if (result <= 0) {
+			return false;
+		}
+		return true;
+	}
 
   public boolean delete(ReviewDTO reviewDTO) {
-    if (jdbcTemplate.update(DELETE) <= 0) {
+    if (jdbcTemplate.update(DELETE, reviewDTO.getReviewId()) <= 0) {
       return false;
     }
     return true;
@@ -92,13 +112,14 @@ class ReviewRowMapper implements RowMapper<ReviewDTO> {
   public ReviewDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
     ReviewDTO reviewDTO = new ReviewDTO();
     reviewDTO.setReviewId(rs.getString("REVIEW_id"));
-    reviewDTO.setMemberId(rs.getString("MEMBER_id"));
+    reviewDTO.setProfileImgName(rs.getString("PROFILEIMG_name"));
+    reviewDTO.setMemberId(rs.getString("REVIEW.MEMBER_id"));
     reviewDTO.setMemberNickname(rs.getString("MEMBER_nickname"));
     reviewDTO.setReviewPartner(rs.getString("REVIEW_partner"));
-    reviewDTO.setReviewPartnerNickname(rs.getString("REVIEW_partnernickname"));
     reviewDTO.setReviewDate(rs.getString("REVIEW_date"));
     reviewDTO.setReviewScore(rs.getString("REVIEW_score"));
     reviewDTO.setReviewContent(rs.getString("REVIEW_content"));
+    reviewDTO.setReviewTotalCnt(rs.getString("REVIEW_totalCnt"));
     return reviewDTO;
   }
 }
@@ -111,7 +132,7 @@ class ReviewSelectOneRowMapper implements RowMapper<ReviewDTO> {
     reviewDTO.setProfileImgName(rs.getString("PROFILEIMG_name"));
     reviewDTO.setMemberId(rs.getString("REVIEW.MEMBER_id"));
     reviewDTO.setMemberNickname(rs.getString("MEMBER.MEMBER_nickname"));
-    reviewDTO.setReviewPartner(rs.getString("REVIEW_partner"));
+    reviewDTO.setReviewPartner("REVIEW_partner");
     reviewDTO.setReviewDate(rs.getString("REVIEW_date"));
     reviewDTO.setReviewScore(rs.getString("REVIEW_score"));
     reviewDTO.setReviewContent(rs.getString("REVIEW_content"));

@@ -110,27 +110,27 @@
 							<!-- 게시글 내용 출력 -->
 							<pre style="background: none; border: none; font-size: 15px; font-style: 'Malgun Gothic'; line-height: 210%;">${freePostSingle.freePostContent}</pre>
 						</div>
-						<footer>
-							<div class="col" style="width:54.4%;">
-								<c:if test="${member == null}">
-									<a id="recommendBtnMessage" onclick="message()" class="love" style="margin-top:0%">
-										<i class="ion-android-favorite-outline"></i><div id="recommendCnt">${freePostSingle.recommendCnt}</div>
-										</a>
-								</c:if>
-								<c:if test="${member != null}">
-										<c:if test="${member != recommendInfo.memberId}">
-											<a id="recommendBtn" class="love" style="margin-top:0%" data-postid="${freePostSingle.freePostId}" data-memberid="${member}">
-											<i class="ion-android-favorite-outline"></i><div id="recommendCnt">${freePostSingle.recommendCnt}</div>
-												</a>
-										</c:if>
-										<c:if test="${member == recommendInfo.memberId}">
-											<a id="recommendBtn" class="love active" style="margin-top:0%" data-postid="${freePostSingle.freePostId}" data-memberid="${member}">
-											<i class="ion-android-favorite-outline"></i><div id="recommendCnt">${freePostSingle.recommendCnt}</div>
-												</a>
-										</c:if>
-								</c:if>
-							</div>
-						</footer>
+							<footer>
+								<div class="col" style="width:54.4%;">
+									<c:if test="${member == null}">
+										<a id="recommendBtnMessage" onclick="message()" class="love" style="margin-top:0%">
+								        	<i class="ion-android-favorite-outline"></i><div id="recommendCnt">${freePostSingle.recommendCnt}</div>
+								   	 	</a>
+									</c:if>
+									<c:if test="${member != null}">
+											<c:if test="${member != recommendInfo.memberId}">
+												<a id="recommendBtn" class="love" style="margin-top:0%" data-postid="${freePostSingle.freePostId}" data-memberid="${member}">
+								        		<i class="ion-android-favorite-outline"></i><div id="recommendCnt">${freePostSingle.recommendCnt}</div>
+								   	 			</a>
+											</c:if>
+											<c:if test="${member == recommendInfo.memberId}">
+												<a id="recommendBtn" class="love active" style="margin-top:0%" data-postid="${freePostSingle.freePostId}" data-memberid="${member}">
+								        		<i class="ion-android-favorite-outline"></i><div id="recommendCnt">${freePostSingle.recommendCnt}</div>
+								   	 			</a>
+											</c:if>
+									</c:if>
+								</div>
+							</footer>
 					</article>
 					<div  style="display: flex; justify-content: center;">
 							<c:if test="${member != null && member == freePostSingle.memberId}">
@@ -181,6 +181,7 @@
 	<script src="css/user/scripts/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
 	<script src="css/user/scripts/sweetalert/dist/sweetalert.min.js"></script>
 	<script src="css/user/scripts/toast/jquery.toast.min.js"></script>
+	<script src="js/user/recommendUpDown.js"></script>
 	<script src="css/user/js/demo.js"></script>
 	<script src="css/user/js/e-magz.js"></script>
 	<script>

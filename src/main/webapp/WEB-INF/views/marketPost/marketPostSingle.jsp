@@ -142,6 +142,7 @@
 								<!-- 게시글 내용 출력 -->
 								<pre style="background: none; border: none; font-size: 15px; font-style: 'Malgun Gothic';  line-height: 210%;">${marketPostSingle.marketPostContent}</pre>
 							</div>
+							<!-- 게시글 추천 -->
 							<footer>
 								<div class="col" style="width:54.4%;">
 									<c:if test="${member == null}">
@@ -214,6 +215,7 @@
 	<script src="css/user/scripts/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
 	<script src="css/user/scripts/sweetalert/dist/sweetalert.min.js"></script>
 	<script src="css/user/scripts/toast/jquery.toast.min.js"></script>
+	<script src="js/user/recommendUpDown.js"></script>
 	<script src="css/user/js/demo.js"></script>
 	<script src="css/user/js/e-magz.js"></script>
 	<script>
